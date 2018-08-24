@@ -167,6 +167,9 @@ namespace slam
                 SO3(rvec.at<double>(0,0), rvec.at<double>(1,0), rvec.at<double>(2,0)),
                 Vector3d( tvec.at<double>(0,0), tvec.at<double>(1,0), tvec.at<double>(2,0))
         );
+
+        cout << "-------------------------------" << endl;
+        cout << T_c_r_estimated_ << endl;
     }
 
     bool VO::checkEstimatedPose()

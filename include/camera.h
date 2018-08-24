@@ -16,7 +16,7 @@ namespace slam
         double fx_, fy_, cx_, cy_, depth_scale_;
 
     public:
-        Camera() {}
+        Camera();
         Camera(double fx, double fy, double cx, double cy, float depth_scale = 0) :
             fx_(fx), fy_(fy), cx_(cx), cy_(cy), depth_scale_(depth_scale)
         {}

@@ -66,7 +66,11 @@ int main ( int argc, char** argv )
         Mat color = cv::imread ( rgb_files[i] );
         Mat depth = cv::imread ( depth_files[i], -1 );
         if ( color.data==nullptr || depth.data==nullptr )
+        {
+            cout << "read image null" << endl;
             break;
+        }
+
         slam::Frame::Ptr pFrame = slam::Frame::createFrame();
         pFrame->camera_ = camera;
         pFrame->color_ = color;
@@ -78,8 +82,12 @@ int main ( int argc, char** argv )
         cout<<"VO costs time: "<<timer.elapsed()<<endl;
 
         if ( vo->state_ == slam::VO::LOST )
+        {
+            cout << "vo state lost" << endl;
             break;
-        SE3 Tcw = pFrame->T_c_w_.inverse();
+        }
+
+        SE3 Tcw = pFrame->transform_.inverse();
 
         // show the map and the camera pose
         cv::Affine3d M(
@@ -96,6 +104,7 @@ int main ( int argc, char** argv )
         cv::imshow("image", color );
         cv::waitKey(1);
         vis.setWidgetPose( "Camera", M);
+        vis.setWindowSize(cv::Size(800,800));
         vis.spinOnce(1, false);
     }
 
