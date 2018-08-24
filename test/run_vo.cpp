@@ -90,20 +90,20 @@ int main ( int argc, char** argv )
         SE3 Tcw = pFrame->transform_.inverse();
 
         // show the map and the camera pose
-        cv::Affine3d M(
-                cv::Affine3d::Mat3(
-                        Tcw.rotation_matrix()(0,0), Tcw.rotation_matrix()(0,1), Tcw.rotation_matrix()(0,2),
-                        Tcw.rotation_matrix()(1,0), Tcw.rotation_matrix()(1,1), Tcw.rotation_matrix()(1,2),
-                        Tcw.rotation_matrix()(2,0), Tcw.rotation_matrix()(2,1), Tcw.rotation_matrix()(2,2)
+        Eigen::Matrix3d m = Tcw.rotation_matrix();
+        Eigen::Vector3d v =  Tcw.translation();
+
+        cv::Affine3d camPos(cv::Affine3d::Mat3(
+                        m(0,0), m(0,1), m(0,2),
+                        m(1,0), m(1,1), m(1,2),
+                        m(2,0), m(2,1), m(2,2)
                 ),
-                cv::Affine3d::Vec3(
-                        Tcw.translation()(0,0), Tcw.translation()(1,0), Tcw.translation()(2,0)
-                )
+                cv::Affine3d::Vec3(v(0), v(1), v(2))
         );
 
         cv::imshow("image", color );
         cv::waitKey(1);
-        vis.setWidgetPose( "Camera", M);
+        vis.setWidgetPose( "Camera", camPos);
         vis.setWindowSize(cv::Size(800,800));
         vis.spinOnce(1, false);
     }
