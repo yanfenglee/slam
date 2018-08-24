@@ -1,5 +1,11 @@
 
-add_executable(slam main.cpp Camera.cpp ../include/Config.h Config.cpp ../include/frame.h frame.cpp ../include/map.h map.cpp ../include/mappoint.h mappoint.cpp)
+add_library(slam SHARED
+        Camera.cpp
+        Config.cpp
+        frame.cpp
+        map.cpp
+        mappoint.cpp
+        vo.cpp)
 
 target_link_libraries(slam ${THIRD_PARTY_LIBS})
 

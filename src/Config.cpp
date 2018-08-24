@@ -23,14 +23,6 @@ namespace slam
         }
     }
 
-    template<typename T> T Config::get( const std::string& key )
-    {
-        if ( config_ == nullptr )
-            setParameterFile("slam.conf");
-
-        return T( Config::config_->file_[key] );
-    }
-
     Config::~Config()
     {
         if ( file_.isOpened() )

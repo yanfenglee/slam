@@ -24,7 +24,13 @@ namespace slam
 
         // access the parameter values
         template< typename T >
-        static T get( const std::string& key );
+        static T get( const std::string& key )
+        {
+            if ( config_ == nullptr )
+                setParameterFile("slam.yaml");
+
+            return T( Config::config_->file_[key] );
+        }
     };
 }
 

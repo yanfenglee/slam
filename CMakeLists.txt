@@ -4,11 +4,9 @@ project(slam)
 set(CMAKE_CXX_STANDARD 14)
 
 list( APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake_modules )
+set( LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib )
 
 ############### dependencies ######################
-# Eigen
-# include_directories( "/usr/include/eigen3" )
-
 find_package( Eigen3 REQUIRED )
 include_directories( ${Eigen3} )
 
