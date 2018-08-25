@@ -10,6 +10,7 @@
 
 #include "vo.h"
 #include "Config.h"
+#include "g2o_types.h"
 
 namespace slam
 {
@@ -170,6 +171,46 @@ namespace slam
 
         cout << "-------------------------------" << endl;
         cout << T_c_r_estimated_ << endl;
+
+
+        // using bundle adjustment to optimize the pose
+        typedef g2o::BlockSolver<g2o::BlockSolverTraits<6,2>> Block;
+        Block::LinearSolverType* linearSolver = new g2o::LinearSolverDense<Block::PoseMatrixType>();
+        Block* solver_ptr = new Block(unique_ptr<Block::LinearSolverType>(linearSolver) );
+        g2o::OptimizationAlgorithmLevenberg* solver = new g2o::OptimizationAlgorithmLevenberg ( std::unique_ptr<Block>(solver_ptr) );
+        g2o::SparseOptimizer optimizer;
+        optimizer.setAlgorithm ( solver );
+
+        g2o::VertexSE3Expmap* pose = new g2o::VertexSE3Expmap();
+        pose->setId ( 0 );
+        pose->setEstimate ( g2o::SE3Quat (
+                T_c_r_estimated_.rotation_matrix(),
+                T_c_r_estimated_.translation()
+        ) );
+        optimizer.addVertex ( pose );
+
+        // edges
+        for ( int i=0; i<inliers.rows; i++ )
+        {
+            int index = inliers.at<int>(i,0);
+            // 3D -> 2D projection
+            EdgeProjectXYZ2UVPoseOnly* edge = new EdgeProjectXYZ2UVPoseOnly();
+            edge->setId(i);
+            edge->setVertex(0, pose);
+            edge->camera_ = curr_->camera_.get();
+            edge->point_ = Vector3d( pts3d[index].x, pts3d[index].y, pts3d[index].z );
+            edge->setMeasurement( Vector2d(pts2d[index].x, pts2d[index].y) );
+            edge->setInformation( Eigen::Matrix2d::Identity() );
+            optimizer.addEdge( edge );
+        }
+
+        optimizer.initializeOptimization();
+        optimizer.optimize(10);
+
+        T_c_r_estimated_ = SE3 (
+                pose->estimate().rotation(),
+                pose->estimate().translation()
+        );
     }
 
     bool VO::checkEstimatedPose()
