@@ -1,5 +1,5 @@
 
-add_library(slam SHARED
+add_library(slam
         Camera.cpp
         Config.cpp
         frame.cpp
