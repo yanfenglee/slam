@@ -169,10 +169,6 @@ namespace slam
                 Vector3d( tvec.at<double>(0,0), tvec.at<double>(1,0), tvec.at<double>(2,0))
         );
 
-        cout << "-------------------------------" << endl;
-        cout << T_c_r_estimated_ << endl;
-
-
         // using bundle adjustment to optimize the pose
         typedef g2o::BlockSolver<g2o::BlockSolverTraits<6,2>> Block;
         Block::LinearSolverType* linearSolver = new g2o::LinearSolverDense<Block::PoseMatrixType>();
@@ -211,6 +207,9 @@ namespace slam
                 pose->estimate().rotation(),
                 pose->estimate().translation()
         );
+
+        cout << "-------------------------------22222" << endl;
+        cout << T_c_r_estimated_ << endl;
     }
 
     bool VO::checkEstimatedPose()
